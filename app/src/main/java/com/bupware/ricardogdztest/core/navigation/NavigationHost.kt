@@ -25,7 +25,7 @@ fun NavigationHost (navController: NavHostController,startDestination: String) {
         }
 
         composable("${Destinations.CharacterFile.ruta}/{characterID}",arguments = listOf(navArgument("characterID"){type = NavType.IntType})){ backStackEntry ->
-            CharacterFile(backStackEntry.arguments!!.getInt("characterID"))
+            CharacterFile(navController,backStackEntry.arguments!!.getInt("characterID"))
         }
 
     }

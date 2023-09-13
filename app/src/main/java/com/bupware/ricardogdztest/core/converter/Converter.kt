@@ -19,7 +19,7 @@ object Converter {
             originUrl = characterDto.origin.url,
             locationName = characterDto.location.name,
             locationUrl = characterDto.location.url,
-            image = characterDto.image, //TODO ESTO A URI
+            image = characterDto.image,
             url = characterDto.url,
             created = characterDto.created
         )
@@ -35,7 +35,7 @@ object Converter {
             gender = characterLocal.gender,
             origin = Origin(characterLocal.originName,characterLocal.originUrl),
             location = Location(characterLocal.locationName,characterLocal.locationUrl),
-            image = characterLocal.image, //TODO REVISAR?
+            image = characterLocal.image,
             episode = emptyList(),
             url = characterLocal.url,
             created = characterLocal.created

@@ -29,7 +29,6 @@ class HomeScreenViewModel @Inject constructor(savedStateHandle: SavedStateHandle
     var characterListSearch by savedStateHandle.saveable { mutableStateOf(emptyList<Character>()) }
     var debounceHandler: Handler = Handler(Looper.getMainLooper())
 
-    //TODO simplificar
     fun initHomeScreen(context:Context){
 
         val localHandler = LocalHandler(context)
@@ -76,8 +75,7 @@ class HomeScreenViewModel @Inject constructor(savedStateHandle: SavedStateHandle
                     val remoteData = mutableListOf<Character>()
 
                     val first = async {
-                        val localCharacters = withContext(Dispatchers.Default){localHandler.getLocalCharacters()}
-                        if (localCharacters != null) remoteData += localCharacters.subList(0,19)
+                        remoteData += localCharacters.subList(0,19)
                     }
 
                     val second = async {
@@ -113,7 +111,7 @@ class HomeScreenViewModel @Inject constructor(savedStateHandle: SavedStateHandle
         // Remove last callback
         debounceHandler.removeCallbacksAndMessages(null)
 
-        searchingTerm = term.trim()
+        searchingTerm = term
 
         if (searchingTerm.isNotBlank()) {
 
@@ -127,9 +125,17 @@ class HomeScreenViewModel @Inject constructor(savedStateHandle: SavedStateHandle
     }
 
     private fun searchCharactersByName(context: Context) {
+
+        val localHandler = LocalHandler(context)
+
         viewModelScope.launch {
             val returningData = CharacterRepository.getCharactersByName(searchingTerm)
-            if (!returningData.isNullOrEmpty()) characterListSearch = returningData
+            if (!returningData.isNullOrEmpty()) {
+                characterListSearch = returningData
+
+                //And save locally
+                localHandler.insertCharacters(returningData)
+            }
         }
     }
 

@@ -10,28 +10,35 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
+import androidx.compose.material.TextFieldColors
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.bupware.ricardogdztest.core.DTO.Character
 import com.bupware.ricardogdztest.core.composables.CharacterBox
+import com.bupware.ricardogdztest.core.composables.CharacterBoxBig
 import com.bupware.ricardogdztest.core.composables.TextFieldNoPadding
 import com.bupware.ricardogdztest.core.utils.systemBarController.SystemBarColor
+import com.bupware.ricardogdztest.ui.theme.Lexend
 import com.bupware.ricardogdztest.ui.theme.LightBlack
 
 var initExecuted = false
+var randomIndex = (0..39).random()
 
 @Composable
 fun HomeScreen(navController: NavController, viewModel: HomeScreenViewModel = hiltViewModel()){
@@ -48,7 +55,6 @@ fun HomeScreen(navController: NavController, viewModel: HomeScreenViewModel = hi
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenBody(navController: NavController, viewModel: HomeScreenViewModel = hiltViewModel()){
 
@@ -66,10 +72,16 @@ fun HomeScreenBody(navController: NavController, viewModel: HomeScreenViewModel 
                 .fillMaxSize()
                 .padding(20.dp)
         ) {
-            Column(Modifier.clip(RoundedCornerShape(20.dp))) {
-                TextFieldNoPadding(modifier = Modifier.fillMaxSize(),
+            Column(Modifier.clip(RoundedCornerShape(20.dp)).background(Color.White)) {
+                TextFieldNoPadding(
+                    modifier = Modifier.fillMaxSize(),
                     value = viewModel.searchingTerm,
-                    onValueChange = { viewModel.searchTerm(it, context) })
+                    singleLine = true,
+                    colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent, focusedIndicatorColor = Color.White, cursorColor = Color.Black),
+                    placeholder = { Text(text = "Search character by name", fontFamily = Lexend, color = Color.Black) },
+                    onValueChange = { viewModel.searchTerm(it, context) },
+                    textStyle = TextStyle(fontFamily = Lexend),
+                )
             }
         }
         //endregion
@@ -96,40 +108,54 @@ fun HomeContent(viewModel: HomeScreenViewModel = hiltViewModel(), navController:
             CircularProgressIndicator(color = Color.White)
         }
     } else {
-        //region CHARACTER EXPLORER
+
         Column(
             Modifier
                 .padding(top = 0.dp, start = 20.dp, end = 20.dp)
                 .fillMaxSize()
         ) {
-
+            //region CHARACTER LIST
             Text(
                 text = "Character List",
                 color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontFamily = Lexend,
+                fontSize = 25.sp,
                 modifier = Modifier.padding(bottom = 3.dp)
             )
 
-            //CARATULAS
             if (viewModel.characterList.isNotEmpty()) CharacterList(
                 characters = viewModel.characterList.subList(
                     0, 20
                 ), navController = navController
             )
+            //endregion
 
+            //region OUTSTANDING CHARACTER
+            Column(Modifier.padding(top = 10.dp, bottom = 10.dp)) {
+                CharacterBoxBig(character = viewModel.characterList[randomIndex], navController = navController)
+            }
+            //endregion
+
+            //region RANDOM CHARACTER LIST
             Text(
                 text = "Random Character List",
                 color = Color.White,
-                modifier = Modifier.padding(bottom = 3.dp)
+                modifier = Modifier.padding(bottom = 3.dp),
+                fontWeight = FontWeight.Bold,
+                fontFamily = Lexend,
+                fontSize = 25.sp,
             )
 
-            //CARATULAS
+
             if (viewModel.characterList.isNotEmpty()) CharacterList(
                 characters = viewModel.characterList.subList(
                     20, 39
                 ), navController
             )
+            //endregion
         }
-        //endregion
+
     }
 }
 
@@ -150,12 +176,10 @@ fun CharacterList(characters: List<Character>, navController: NavController){
 @Composable
 fun CharacterListSearch(characters: List<Character>, navController: NavController){
 
-    LazyRow(Modifier.clip(RoundedCornerShape(6.dp))){
-        items(characters.size){ index ->
-
-            CharacterBox(character =  characters[index], navController = navController)
-            Spacer(modifier = Modifier.padding(end = 8.dp))
-
+    LazyColumn(contentPadding = PaddingValues(20.dp)){
+        items(characters.size){index->
+            CharacterBoxBig(character = characters[index], navController = navController)
+            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 

@@ -12,6 +12,6 @@ class CharacterRepository(private val characterDao: CharacterDao) {
 
     val readAllData : Flow<List<Character>> = characterDao.readAllData()
 
-    fun getUserByID(characterID : String) : Flow<Character> = characterDao.getCharacterByID(characterID)
+    fun getCharacterById(characterID : String) : Flow<Character> = characterDao.getCharacterByID(characterID)
 
 }

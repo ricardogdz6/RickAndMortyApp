@@ -30,7 +30,7 @@ abstract class WDDatabase : RoomDatabase() {
                     context.applicationContext,
                     WDDatabase::class.java,
                     "ricardogdzTest_database"
-                //TODO: Remove fallbackToDestructiveMigration() el dia de despliegue
+
                 ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 return instance

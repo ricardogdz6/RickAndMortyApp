@@ -9,6 +9,8 @@ import com.bupware.ricardogdztest.core.room.WDDatabase
 import com.bupware.ricardogdztest.core.room.character.CharacterRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -30,6 +32,13 @@ class LocalHandler(val context: Context): Serializable {
 
         return characters
 
+    }
+
+    suspend fun getLocalCharacterById(id:Int):CharacterDTO{
+
+        val localCharacter = CharacterRepository(room.characterDao()).getCharacterById(id.toString()).first()
+
+        return Converter.characterLocalToDto(localCharacter)
     }
 
     suspend fun insertCharacters(characters:List<CharacterDTO>){
